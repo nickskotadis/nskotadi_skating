@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { Request, Response } from "express";
 import { createClient } from "@supabase/supabase-js";
 import type { AuthenticatedUser, UserRole } from "../lib/types.js";

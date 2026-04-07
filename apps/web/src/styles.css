@@ -698,6 +698,217 @@ select {
 }
 
 /* ──────────────────────────────────────────
+   Attendance toggles
+─────────────────────────────────────────── */
+.attendance-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.attendance-row:last-child {
+  border-bottom: none;
+}
+
+.attendance-buttons {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.att-btn {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 100ms, color 100ms;
+  box-shadow: none;
+}
+
+.att-btn--present.att-btn--active  { background: #bbf7d0; color: #065f46; border-color: #6ee7b7; }
+.att-btn--absent.att-btn--active   { background: #fecdd3; color: #9f1239; border-color: #fca5a5; }
+.att-btn--makeup.att-btn--active   { background: #bfdbfe; color: #1e40af; border-color: #93c5fd; }
+
+/* ──────────────────────────────────────────
+   Skill grid
+─────────────────────────────────────────── */
+.skill-grid {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.skill-status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2em 0.55em;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.skill-status-badge--not_started     { background: #f1f5f9; color: #64748b; }
+.skill-status-badge--in_progress     { background: #fef3c7; color: #92400e; }
+.skill-status-badge--passed          { background: #bbf7d0; color: #065f46; }
+.skill-status-badge--not_applicable  { background: #e2e8f0; color: #94a3b8; }
+
+/* ──────────────────────────────────────────
+   Star rating
+─────────────────────────────────────────── */
+.star-row {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.star-btn {
+  font-size: 1.5rem;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: none;
+  color: #d1d5db;
+  transition: color 100ms;
+}
+
+.star-btn--active {
+  color: var(--accent-2);
+}
+
+/* ──────────────────────────────────────────
+   Sticker picker
+─────────────────────────────────────────── */
+.sticker-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sticker-btn {
+  font-size: 1.6rem;
+  background: var(--surface-strong);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  box-shadow: none;
+  transition: border-color 100ms, transform 100ms;
+}
+
+.sticker-btn--active {
+  border-color: var(--accent);
+  transform: scale(1.15);
+}
+
+/* ──────────────────────────────────────────
+   Feedback card (student/parent view)
+─────────────────────────────────────────── */
+.feedback-card {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  text-align: center;
+}
+
+.feedback-sticker {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.feedback-note {
+  font-size: 1rem;
+  color: var(--ink);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* ──────────────────────────────────────────
+   Calendar export buttons
+─────────────────────────────────────────── */
+.calendar-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.calendar-option-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.2rem;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--ink);
+  box-shadow: none;
+  transition: box-shadow 120ms, transform 120ms;
+}
+
+.calendar-option-btn:hover {
+  box-shadow: 0 4px 16px rgba(31, 122, 97, 0.15);
+  transform: translateY(-2px);
+}
+
+.calendar-option-icon {
+  font-size: 2rem;
+}
+
+/* ──────────────────────────────────────────
+   Color swatch
+─────────────────────────────────────────── */
+.color-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.1);
+  vertical-align: middle;
+}
+
+/* ──────────────────────────────────────────
+   Section heading
+─────────────────────────────────────────── */
+.section-heading {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  margin-bottom: 0.25rem;
+}
+
+/* ──────────────────────────────────────────
+   Page actions bar
+─────────────────────────────────────────── */
+.page-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ──────────────────────────────────────────
    Print styles (Phase 2 reports)
 ─────────────────────────────────────────── */
 @media print {
