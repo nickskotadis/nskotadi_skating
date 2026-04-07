@@ -1,4 +1,5 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import type { UserRole } from "../../lib/types";
 
@@ -38,9 +39,45 @@ const NAV_ITEMS: Record<UserRole, NavItem[]> = {
   ],
 };
 
+const PAGE_TITLES: Record<string, string> = {
+  "/admin": "Dashboard",
+  "/admin/users": "Users",
+  "/admin/levels": "Skill Levels",
+  "/admin/locations": "Locations",
+  "/admin/sessions": "Sessions",
+  "/admin/sessions/new": "New Session",
+  "/admin/makeups": "Make-ups",
+  "/admin/ratings": "Ratings",
+  "/admin/reports": "Reports",
+  "/admin/ice-show": "Ice Show",
+  "/instructor": "Dashboard",
+  "/instructor/sessions": "My Sessions",
+  "/instructor/attendance": "Attendance",
+  "/instructor/skills": "Skills",
+  "/student": "Dashboard",
+  "/student/schedule": "Schedule",
+  "/student/skills": "My Skills",
+  "/student/feedback": "Feedback",
+  "/parent": "Dashboard",
+  "/parent/schedule": "Schedule",
+  "/parent/skills": "Skills",
+  "/parent/feedback": "Feedback",
+  "/parent/rate": "Rate Instructors",
+  "/parent/calendar": "Calendar",
+};
+
 export default function Shell() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    // Match exact path first, then prefix (for dynamic routes like /admin/sessions/:id)
+    const label =
+      PAGE_TITLES[pathname] ??
+      Object.entries(PAGE_TITLES).find(([k]) => pathname.startsWith(k + "/"))?.[1];
+    document.title = label ? `SkateTrack — ${label}` : "SkateTrack";
+  }, [pathname]);
 
   if (!user) return null;
 
