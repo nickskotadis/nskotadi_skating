@@ -103,6 +103,7 @@ button {
 
 input,
 textarea {
+  width: 100%;
   border: 1px solid #cddbc5;
   background: var(--surface-strong);
   color: var(--ink);
