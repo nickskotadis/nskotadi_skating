@@ -304,7 +304,7 @@ select {
 
 .page-subtitle {
   color: var(--ink-soft);
-  margin-top: -1rem;
+  margin-top: 0.25rem;
 }
 
 .page-header-row {
