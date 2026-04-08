@@ -136,6 +136,45 @@
     "repo_iu": "https://github.iu.edu/I400sp25Vibe/nskotadi_skating",
     "repo_github": "https://github.com/nickskotadis/nskotadi_skating"
   },
+  "session_2_build": {
+    "summary": "Completed all 6 remaining feature groups — full SkateTrack implementation",
+    "backend_files_added": [
+      "apps/api/src/lib/ical.ts (RFC 5545 iCal builder)",
+      "routers/admin/sessions.ts (CRUD + class_date generation + enrollment seeding)",
+      "routers/admin/locations.ts",
+      "routers/admin/makeups.ts",
+      "routers/admin/ratings.ts",
+      "routers/admin/reports.ts",
+      "routers/admin/ice-shows.ts",
+      "routers/instructor/sessions.ts",
+      "routers/instructor/attendance.ts (auto-creates makeup_requests on absent)",
+      "routers/instructor/skills.ts",
+      "routers/instructor/feedback.ts",
+      "routers/student/schedule.ts",
+      "routers/student/skills.ts",
+      "routers/student/feedback.ts",
+      "routers/parent/children.ts",
+      "routers/parent/schedule.ts",
+      "routers/parent/ratings.ts",
+      "routers/parent/calendar.ts (iCal download + webcal/Google/Outlook URLs)",
+      "routers/shared/calendar.ts (tokenized unauthenticated feed)"
+    ],
+    "frontend_files_added": [
+      "pages/admin: LocationsPage, SessionsPage, SessionCreatePage, SessionDetailPage, MakeupsPage, RatingsPage, ReportsPage, IceShowPage",
+      "pages/instructor: MySessionsPage, AttendancePage, SkillsPage, FeedbackCardPage",
+      "pages/student: SchedulePage, SkillsPage, FeedbackPage",
+      "pages/parent: ChildSchedulePage, ChildSkillsPage, ChildFeedbackPage, RatePage, CalendarPage"
+    ],
+    "ui_fixes": [
+      "inputs width:100% + min-width:0 to prevent overflow in grid",
+      "split grid columns 2fr 1fr -> 1fr 1fr for equal first/last name inputs",
+      "added page-header-row flex class (title + button overlap fix)",
+      "removed negative margin-top on page-subtitle",
+      "dynamic tab titles: SkateTrack — Page Name via Shell useEffect + useLocation",
+      "vercel.json: added routes + filesystem handler for SPA refresh 404 fix"
+    ],
+    "deployment_note": "Vercel auto-deploy from GitHub broken (root dir mismatch). Must run 'vercel --prod' from apps/web manually. Fix: set Root Directory to apps/web in Vercel dashboard Settings > General."
+  },
   "unit_tests": {
     "file": "apps/api/src/lib/dates.test.ts",
     "runner": "Node.js built-in test runner (tsx --test)",
