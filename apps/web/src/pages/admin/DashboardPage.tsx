@@ -76,14 +76,30 @@ export default function AdminDashboard() {
                 <span className="quick-link-icon">🏅</span>
                 <span>Skill Levels</span>
               </Link>
-              <div className="quick-link-card quick-link-card--soon">
+              <Link to="/admin/locations" className="quick-link-card">
+                <span className="quick-link-icon">📍</span>
+                <span>Rink Locations</span>
+              </Link>
+              <Link to="/admin/sessions" className="quick-link-card">
                 <span className="quick-link-icon">📅</span>
-                <span>Sessions <small>(Phase 2)</small></span>
-              </div>
-              <div className="quick-link-card quick-link-card--soon">
-                <span className="quick-link-icon">✅</span>
-                <span>Attendance <small>(Phase 2)</small></span>
-              </div>
+                <span>Sessions</span>
+              </Link>
+              <Link to="/admin/makeups" className="quick-link-card">
+                <span className="quick-link-icon">🔄</span>
+                <span>Makeup Requests</span>
+              </Link>
+              <Link to="/admin/ratings" className="quick-link-card">
+                <span className="quick-link-icon">⭐</span>
+                <span>Instructor Ratings</span>
+              </Link>
+              <Link to="/admin/reports" className="quick-link-card">
+                <span className="quick-link-icon">📝</span>
+                <span>Feedback Reports</span>
+              </Link>
+              <Link to="/admin/ice-show" className="quick-link-card">
+                <span className="quick-link-icon">🎭</span>
+                <span>Ice Show</span>
+              </Link>
             </div>
           </div>
         </>
