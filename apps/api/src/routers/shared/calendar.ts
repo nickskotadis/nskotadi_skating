@@ -87,6 +87,7 @@ router.get("/:token/feed.ics", async (req, res) => {
         });
       }
     }
+  // Security fix: reject unsupported roles explicitly rather than returning blank calendar
   } else if (calUser.role === "parent") {
     // Get children
     const { data: links } = await dbClient
@@ -167,6 +168,10 @@ router.get("/:token/feed.ics", async (req, res) => {
         }
       }
     }
+  } else {
+    // Security fix: reject any other roles (admin, instructor) — calendar feed is for students/parents only
+    res.status(403).json({ error: "Calendar feed is not available for this role." });
+    return;
   }
 
   const calName = `SkateTrack - ${calUser.first_name ?? "Schedule"}`;

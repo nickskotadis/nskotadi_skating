@@ -21,6 +21,17 @@ router.get("/:classDateId", async (req, res) => {
   if (cdError) { res.status(500).json({ error: cdError.message }); return; }
   if (!classDate) { res.status(404).json({ error: "Class date not found." }); return; }
 
+  // Security fix: verify instructor teaches this session
+  const { data: instrLinkGet, error: instrGetError } = await dbClient
+    .from("session_instructors")
+    .select("id")
+    .eq("session_id", classDate.session_id)
+    .eq("instructor_id", user.id)
+    .maybeSingle();
+
+  if (instrGetError) { res.status(500).json({ error: instrGetError.message }); return; }
+  if (!instrLinkGet) { res.status(403).json({ error: "You do not teach this session." }); return; }
+
   // Get enrollments for this session (active only)
   const { data: enrollments, error: enrollError } = await dbClient
     .from("enrollments")
@@ -82,6 +93,17 @@ router.post("/:classDateId", async (req, res) => {
 
   if (cdError) { res.status(500).json({ error: cdError.message }); return; }
   if (!classDate) { res.status(404).json({ error: "Class date not found." }); return; }
+
+  // Security fix: verify instructor teaches this session
+  const { data: instrLinkPost, error: instrPostError } = await dbClient
+    .from("session_instructors")
+    .select("id")
+    .eq("session_id", classDate.session_id)
+    .eq("instructor_id", user.id)
+    .maybeSingle();
+
+  if (instrPostError) { res.status(500).json({ error: instrPostError.message }); return; }
+  if (!instrLinkPost) { res.status(403).json({ error: "You do not teach this session." }); return; }
 
   const upsertRows = parsed.data.records.map((r) => ({
     class_date_id: classDateId,

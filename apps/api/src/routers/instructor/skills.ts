@@ -9,6 +9,26 @@ router.get("/:enrollmentId", async (req, res) => {
   const user = await requireUser(req, res, ["instructor"]);
   if (!user) return;
 
+  // Security fix: verify instructor teaches the session this enrollment belongs to
+  const { data: enrollment, error: enrollError } = await dbClient
+    .from("enrollments")
+    .select("session_id")
+    .eq("id", req.params.enrollmentId)
+    .maybeSingle();
+
+  if (enrollError) { res.status(500).json({ error: enrollError.message }); return; }
+  if (!enrollment) { res.status(404).json({ error: "Enrollment not found." }); return; }
+
+  const { data: instrLink, error: instrError } = await dbClient
+    .from("session_instructors")
+    .select("id")
+    .eq("session_id", enrollment.session_id)
+    .eq("instructor_id", user.id)
+    .maybeSingle();
+
+  if (instrError) { res.status(500).json({ error: instrError.message }); return; }
+  if (!instrLink) { res.status(403).json({ error: "You do not teach this session." }); return; }
+
   const { data, error } = await dbClient
     .from("skill_assessments")
     .select(`

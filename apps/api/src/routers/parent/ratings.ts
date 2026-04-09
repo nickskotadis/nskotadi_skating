@@ -24,6 +24,32 @@ router.post("/", async (req, res) => {
 
   const d = parsed.data;
 
+  // Security fix: verify parent has a child enrolled in the rated session
+  const { data: childLinks } = await dbClient
+    .from("parent_student_links")
+    .select("student_id")
+    .eq("parent_id", user.id);
+
+  const childIds = (childLinks ?? []).map((l: any) => l.student_id);
+
+  if (childIds.length === 0) {
+    res.status(403).json({ error: "You have no children linked to your account." });
+    return;
+  }
+
+  const { data: enrollment } = await dbClient
+    .from("enrollments")
+    .select("id")
+    .eq("session_id", d.sessionId)
+    .in("student_id", childIds)
+    .is("dropped_at", null)
+    .maybeSingle();
+
+  if (!enrollment) {
+    res.status(403).json({ error: "None of your children are enrolled in this session." });
+    return;
+  }
+
   const { data, error } = await dbClient
     .from("instructor_ratings")
     .insert({
