@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function InstructorDashboard() {
@@ -10,30 +11,26 @@ export default function InstructorDashboard() {
       <p className="page-subtitle">Welcome back, {name}!</p>
 
       <div className="coming-soon-grid">
-        <div className="coming-soon-card">
+        <Link to="/instructor/sessions" className="coming-soon-card" style={{ textDecoration: "none", cursor: "pointer" }}>
           <span className="coming-soon-icon">📅</span>
           <h3>My Sessions</h3>
           <p>View your assigned class sessions and schedules.</p>
-          <span className="phase-tag">Coming in Phase 2</span>
-        </div>
-        <div className="coming-soon-card">
+        </Link>
+        <Link to="/instructor/attendance" className="coming-soon-card" style={{ textDecoration: "none", cursor: "pointer" }}>
           <span className="coming-soon-icon">✅</span>
           <h3>Attendance</h3>
           <p>Mark attendance for your students each class.</p>
-          <span className="phase-tag">Coming in Phase 2</span>
-        </div>
-        <div className="coming-soon-card">
+        </Link>
+        <Link to="/instructor/skills" className="coming-soon-card" style={{ textDecoration: "none", cursor: "pointer" }}>
           <span className="coming-soon-icon">🏅</span>
           <h3>Skill Assessments</h3>
           <p>Track which skills each student has passed.</p>
-          <span className="phase-tag">Coming in Phase 2</span>
-        </div>
-        <div className="coming-soon-card">
+        </Link>
+        <Link to="/instructor/feedback" className="coming-soon-card" style={{ textDecoration: "none", cursor: "pointer" }}>
           <span className="coming-soon-icon">📝</span>
           <h3>Feedback Cards</h3>
           <p>Write end-of-level feedback cards with notes and stickers.</p>
-          <span className="phase-tag">Coming in Phase 2</span>
-        </div>
+        </Link>
       </div>
     </div>
   );

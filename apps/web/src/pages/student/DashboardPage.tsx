@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function StudentDashboard() {
@@ -10,30 +11,26 @@ export default function StudentDashboard() {
       <p className="page-subtitle">Welcome, {name}! Ready to skate?</p>
 
       <div className="coming-soon-grid">
-        <div className="coming-soon-card">
+        <Link to="/student/schedule" className="coming-soon-card" style={{ textDecoration: "none", cursor: "pointer" }}>
           <span className="coming-soon-icon">🗓️</span>
           <h3>My Schedule</h3>
           <p>See your upcoming class dates, times, and rink locations.</p>
-          <span className="phase-tag">Coming in Phase 2</span>
-        </div>
-        <div className="coming-soon-card">
+        </Link>
+        <Link to="/student/skills" className="coming-soon-card" style={{ textDecoration: "none", cursor: "pointer" }}>
           <span className="coming-soon-icon">⭐</span>
           <h3>My Skills</h3>
           <p>Track your progress through each level's skill checklist.</p>
-          <span className="phase-tag">Coming in Phase 2</span>
-        </div>
-        <div className="coming-soon-card">
+        </Link>
+        <Link to="/student/feedback" className="coming-soon-card" style={{ textDecoration: "none", cursor: "pointer" }}>
           <span className="coming-soon-icon">🎴</span>
           <h3>Feedback Card</h3>
           <p>View your end-of-level feedback from your instructor.</p>
-          <span className="phase-tag">Coming in Phase 2</span>
-        </div>
-        <div className="coming-soon-card">
+        </Link>
+        <Link to="/student/schedule" className="coming-soon-card" style={{ textDecoration: "none", cursor: "pointer" }}>
           <span className="coming-soon-icon">🎭</span>
           <h3>Ice Show</h3>
           <p>View your ice show group practice schedule.</p>
-          <span className="phase-tag">Coming in Phase 3</span>
-        </div>
+        </Link>
       </div>
     </div>
   );

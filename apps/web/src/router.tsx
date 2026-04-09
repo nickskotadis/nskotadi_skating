@@ -23,6 +23,7 @@ import InstructorDashboard from "./pages/instructor/DashboardPage";
 import MySessionsPage from "./pages/instructor/MySessionsPage";
 import AttendancePage from "./pages/instructor/AttendancePage";
 import InstructorSkillsPage from "./pages/instructor/SkillsPage";
+import InstructorFeedbackPage from "./pages/instructor/FeedbackCardPage";
 
 // Student pages
 import StudentDashboard from "./pages/student/DashboardPage";
@@ -96,6 +97,7 @@ export const router = createBrowserRouter([
       { path: "/instructor/attendance/:sessionId", element: <RoleGuard role="instructor"><AttendancePage /></RoleGuard> },
       { path: "/instructor/skills", element: <RoleGuard role="instructor"><InstructorSkillsPage /></RoleGuard> },
       { path: "/instructor/skills/:sessionId", element: <RoleGuard role="instructor"><InstructorSkillsPage /></RoleGuard> },
+      { path: "/instructor/feedback", element: <RoleGuard role="instructor"><InstructorFeedbackPage /></RoleGuard> },
 
       // Student routes
       { path: "/student", element: <RoleGuard role="student"><StudentDashboard /></RoleGuard> },
