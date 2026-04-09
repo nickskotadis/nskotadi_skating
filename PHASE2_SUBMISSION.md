@@ -90,7 +90,163 @@ This entire conversation served as the security audit chat log. The agent review
 
 **What was changed:** All 3 HIGH and 1 MEDIUM vulnerability were fixed in the same session. The LOW calendar role issue was also fixed as a defensive measure. Total: 5 files modified, 0 new dependencies introduced.
 
-**Chat log:** [This conversation in Claude Code]
+**Chat log:**
+
+---
+
+**Nick:** phase two in the blueprint.md. also have some details for an assignment here: [Phase 2 assignment requirements — Progress, Testing and Security]
+
+**Claude:** Exploring the codebase and blueprint to understand the full project state before planning.
+
+*(After exploring all 23 route files, migrations, and the blueprint:)*
+
+Plan: Run unit tests, conduct security audit of all API routes, apply fixes, and write the Phase 2 submission document. This conversation will serve as the chat log.
+
+---
+
+**Claude (Security Audit Prompt to agent):** *"Read every file in apps/api/src/ and audit for security vulnerabilities. For each vulnerability found, report the file and line number, vulnerability type, exact code snippet, impact if exploited, and recommended fix. Focus on: routes that don't check the requester owns the resource, missing role checks, input validation gaps, the unauthenticated calendar token endpoint, CORS config, and any place where user-controlled strings are directly interpolated into queries."*
+
+---
+
+**Security Agent Full Report:**
+
+**VULNERABILITY 1 — HIGH: Missing Ownership Check in instructor/skills.ts GET**
+
+The `GET /:enrollmentId` endpoint checks only that a valid instructor exists, but does NOT verify that the enrollment belongs to a session taught by that instructor:
+
+```typescript
+router.get("/:enrollmentId", async (req, res) => {
+  const user = await requireUser(req, res, ["instructor"]);
+  if (!user) return;
+
+  const { data, error } = await dbClient
+    .from("skill_assessments")
+    .select(`...`)
+    .eq("enrollment_id", req.params.enrollmentId)
+```
+
+*Impact:* An instructor can retrieve skill assessments for ANY enrollment, including students from sessions they don't teach.
+
+*Fix:* Verify enrollment's session is taught by the current instructor via `session_instructors` table.
+
+---
+
+**VULNERABILITY 2 — HIGH: Missing Ownership Check in instructor/feedback.ts GET/POST/PATCH**
+
+All three feedback endpoints check only the instructor role, not whether they teach the session:
+
+```typescript
+router.get("/:enrollmentId", async (req, res) => {
+  const user = await requireUser(req, res, ["instructor"]);
+  if (!user) return;
+
+  const { data, error } = await dbClient
+    .from("feedback_cards")
+    .select("*")
+    .eq("enrollment_id", req.params.enrollmentId)
+```
+
+*Impact:* Any instructor can view, create, and modify feedback cards for any student in the system.
+
+*Fix:* Add `session_instructors` ownership check to all three handlers.
+
+---
+
+**VULNERABILITY 3 — HIGH: Missing Ownership Check in instructor/attendance.ts GET and POST**
+
+Instructor can mark attendance for ANY class date without verifying they teach that session:
+
+```typescript
+router.get("/:classDateId", async (req, res) => {
+  const user = await requireUser(req, res, ["instructor"]);
+  if (!user) return;
+
+  const { data: classDate } = await dbClient
+    .from("class_dates")
+    .select("id, session_id, ...")
+    .eq("id", classDateId)
+    .maybeSingle();
+  // No check that user.id is a session_instructor for this session
+```
+
+*Impact:* An instructor can view student attendance and mark attendance — including fabricating absences that auto-create makeup requests — for classes they're not assigned to.
+
+*Fix:* After resolving `classDateId` to `session_id`, verify instructor is in `session_instructors` for that session.
+
+---
+
+**VULNERABILITY 4 — MEDIUM: Parent Can Rate Any Session in parent/ratings.ts**
+
+No check that the parent's child is enrolled before submitting a rating:
+
+```typescript
+const { data, error } = await dbClient
+  .from("instructor_ratings")
+  .insert({
+    session_id: d.sessionId,
+    instructor_id: d.instructorId,
+    parent_id: user.id,
+    rating: d.rating,
+    ...
+  })
+```
+
+*Impact:* A parent can submit ratings for sessions their children don't attend, polluting instructor rating data.
+
+*Fix:* Query `parent_student_links` to get child IDs, then verify at least one is enrolled in `d.sessionId`.
+
+---
+
+**VULNERABILITY 5 — LOW: shared/calendar.ts returns blank calendar for unsupported roles**
+
+No explicit rejection for admin/instructor roles — they silently get an empty calendar:
+
+```typescript
+if (calUser.role === "student") {
+  // ...
+} else if (calUser.role === "parent") {
+  // ...
+}
+// No else — admin/instructor get empty calendar with no error
+```
+
+*Fix:* Add explicit `else` clause returning HTTP 403.
+
+---
+
+**CONFIRMED SECURE — SQL Injection: Not a threat**
+
+The entire API uses the Supabase JavaScript SDK with parameterized query methods (`.eq()`, `.select()`, `.in()`). No user input is ever string-interpolated into SQL. PostgREST never exposes raw SQL to the API layer.
+
+**CONFIRMED SECURE — CORS: Properly whitelisted**
+
+```typescript
+const allowedOrigins = corsOriginsRaw.split(",").map(o => o.trim()).filter(Boolean);
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) { callback(null, true); return; }
+    callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+}));
+```
+
+Not wildcard. Origins are validated against an environment variable whitelist.
+
+**CONFIRMED SECURE — XSS: Not a threat**
+
+React 19 escapes all JSX dynamic values by default. No `dangerouslySetInnerHTML` used anywhere. The only non-HTML output is the iCal feed (plain text), which browsers never parse as HTML.
+
+---
+
+**Claude (applied fixes):**
+
+1. `instructor/skills.ts` — Added 13-line ownership check to GET endpoint before querying skill_assessments
+2. `instructor/feedback.ts` — Extracted shared `verifyInstructorOwnsEnrollment()` helper, called in GET, POST, and PATCH
+3. `instructor/attendance.ts` — Added `session_instructors` check to both GET and POST handlers
+4. `parent/ratings.ts` — Added `parent_student_links` → `enrollments` verification before insert
+5. `shared/calendar.ts` — Added explicit `else { res.status(403) }` for unsupported roles
+
+All files compiled clean (`tsc` exit 0). Unit tests unaffected (6/6 pass).
 
 ---
 
