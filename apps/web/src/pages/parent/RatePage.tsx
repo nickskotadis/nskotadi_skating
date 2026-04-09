@@ -6,14 +6,15 @@ type InstructorOption = {
   id: string;
   first_name: string;
   last_name: string;
-  session_name?: string;
+  session_id: string;
+  session_name: string;
 };
 
 export default function RatePage() {
   const { token } = useAuth();
 
   const [instructors, setInstructors] = useState<InstructorOption[]>([]);
-  const [selectedInstructorId, setSelectedInstructorId] = useState("");
+  const [selectedIdx, setSelectedIdx] = useState(0);
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -24,20 +25,17 @@ export default function RatePage() {
 
   useEffect(() => {
     apiFetch<InstructorOption[]>("/api/parent/instructors", { token })
-      .then((data) => {
-        setInstructors(data);
-        if (data.length > 0) setSelectedInstructorId(data[0].id);
-      })
+      .then((data) => setInstructors(data))
       .catch((err) => setError(err instanceof Error ? err.message : "Failed to load instructors."))
       .finally(() => setLoading(false));
   }, [token]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (rating === 0) {
-      setError("Please select a star rating.");
-      return;
-    }
+    if (rating === 0) { setError("Please select a star rating."); return; }
+    const selected = instructors[selectedIdx];
+    if (!selected) { setError("Please select an instructor."); return; }
+
     setSubmitting(true);
     setError("");
     setSuccessMsg("");
@@ -46,7 +44,8 @@ export default function RatePage() {
         method: "POST",
         token,
         body: JSON.stringify({
-          instructorId: selectedInstructorId,
+          sessionId: selected.session_id,
+          instructorId: selected.id,
           rating,
           comment: comment.trim() || undefined,
         }),
@@ -81,18 +80,17 @@ export default function RatePage() {
         <div className="card" style={{ maxWidth: "480px" }}>
           <form onSubmit={handleSubmit} className="form-stack">
             <div className="form-field">
-              <label htmlFor="instructor-select">Instructor</label>
+              <label htmlFor="instructor-select">Instructor &amp; Session</label>
               <select
                 id="instructor-select"
                 className="select-input"
-                value={selectedInstructorId}
-                onChange={(e) => setSelectedInstructorId(e.target.value)}
+                value={selectedIdx}
+                onChange={(e) => setSelectedIdx(Number(e.target.value))}
                 required
               >
-                {instructors.map((inst) => (
-                  <option key={inst.id} value={inst.id}>
-                    {inst.first_name} {inst.last_name}
-                    {inst.session_name ? ` — ${inst.session_name}` : ""}
+                {instructors.map((inst, idx) => (
+                  <option key={`${inst.id}-${inst.session_id}`} value={idx}>
+                    {inst.first_name} {inst.last_name} — {inst.session_name}
                   </option>
                 ))}
               </select>
@@ -105,7 +103,6 @@ export default function RatePage() {
                   <button
                     key={star}
                     type="button"
-                    className="star-btn"
                     aria-label={`${star} star${star !== 1 ? "s" : ""}`}
                     onClick={() => setRating(star)}
                     onMouseEnter={() => setHoveredRating(star)}

@@ -16,12 +16,28 @@ router.get("/", async (req, res) => {
       id, name, day_of_week, start_time, end_time, season_start, season_end, capacity, created_at,
       skating_levels(id, name),
       rink_locations(id, name),
-      session_instructors(instructor_id, is_primary, users(id, first_name, last_name))
+      session_instructors(instructor_id, is_primary, users(id, first_name, last_name)),
+      enrollments(id, dropped_at)
     `)
     .order("created_at", { ascending: false });
 
   if (error) { res.status(500).json({ error: error.message }); return; }
-  res.json(data ?? []);
+
+  // Transform: flatten session_instructors → instructors, compute enrollment_count
+  const transformed = (data ?? []).map((s: any) => ({
+    ...s,
+    instructors: (s.session_instructors ?? []).map((si: any) => ({
+      id: si.users?.id,
+      first_name: si.users?.first_name,
+      last_name: si.users?.last_name,
+      is_primary: si.is_primary,
+    })),
+    enrollment_count: (s.enrollments ?? []).filter((e: any) => !e.dropped_at).length,
+    enrollments: undefined,
+    session_instructors: undefined,
+  }));
+
+  res.json(transformed);
 });
 
 const createSessionSchema = z.object({
@@ -104,6 +120,49 @@ router.post("/", async (req, res) => {
   }
 
   res.status(201).json(session);
+});
+
+// GET /class-dates?levelId=xxx — upcoming class dates for all sessions of a given level (for makeup assignment)
+router.get("/class-dates", async (req, res) => {
+  const user = await requireUser(req, res, ["admin"]);
+  if (!user) return;
+
+  const { levelId } = req.query;
+  if (!levelId || typeof levelId !== "string") {
+    res.status(400).json({ error: "levelId query param required." });
+    return;
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  const { data: sessions, error } = await dbClient
+    .from("skating_sessions")
+    .select(`
+      id, name,
+      class_dates(id, class_date, start_time, end_time, is_cancelled)
+    `)
+    .eq("level_id", levelId);
+
+  if (error) { res.status(500).json({ error: error.message }); return; }
+
+  // Flatten to upcoming non-cancelled class dates
+  const result: { id: string; class_date: string; start_time: string; end_time: string; session_name: string }[] = [];
+  for (const session of sessions ?? [] as any[]) {
+    for (const cd of (session as any).class_dates ?? []) {
+      if (cd.class_date >= today && !cd.is_cancelled) {
+        result.push({
+          id: cd.id,
+          class_date: cd.class_date,
+          start_time: cd.start_time,
+          end_time: cd.end_time,
+          session_name: (session as any).name,
+        });
+      }
+    }
+  }
+  result.sort((a, b) => a.class_date.localeCompare(b.class_date));
+
+  res.json(result);
 });
 
 // GET /:id — get single session with details

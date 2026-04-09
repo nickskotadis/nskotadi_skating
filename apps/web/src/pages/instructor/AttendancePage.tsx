@@ -85,7 +85,7 @@ export default function AttendancePage() {
         method: "POST",
         token,
         body: JSON.stringify({
-          attendance: Object.entries(attendance).map(([studentId, status]) => ({
+          records: Object.entries(attendance).map(([studentId, status]) => ({
             studentId,
             status,
           })),

@@ -34,6 +34,7 @@ import parentChildrenRouter from "./routers/parent/children.js";
 import parentScheduleRouter from "./routers/parent/schedule.js";
 import parentRatingsRouter from "./routers/parent/ratings.js";
 import parentCalendarRouter from "./routers/parent/calendar.js";
+import parentInstructorsRouter from "./routers/parent/instructors.js";
 import sharedCalendarRouter from "./routers/shared/calendar.js";
 
 const port = Number(process.env.PORT ?? 4000);
@@ -93,6 +94,7 @@ app.use("/api/parent/children", parentChildrenRouter);
 app.use("/api/parent/schedule", parentScheduleRouter);
 app.use("/api/parent/ratings", parentRatingsRouter);
 app.use("/api/parent/calendar", parentCalendarRouter);
+app.use("/api/parent/instructors", parentInstructorsRouter);
 
 // Shared (unauthenticated calendar feed)
 app.use("/api/calendar", sharedCalendarRouter);

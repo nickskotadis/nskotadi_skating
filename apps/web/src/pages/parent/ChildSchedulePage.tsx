@@ -24,7 +24,7 @@ type SessionInfo = {
   start_time: string;
   end_time: string;
   skating_levels: { name: string };
-  rink_locations: { name: string };
+  rink_locations: { name: string; color_hex: string | null };
 };
 
 type ScheduleEntry = {
@@ -121,8 +121,21 @@ export default function ChildSchedulePage() {
                 <div className="schedule-card-header">
                   <div>
                     <h3 className="card-title">{entry.session.name}</h3>
-                    <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", margin: 0 }}>
-                      {entry.session.skating_levels?.name} &mdash; {entry.session.rink_locations?.name}
+                    <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", margin: 0, display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      {entry.session.skating_levels?.name} &mdash;
+                      {entry.session.rink_locations?.color_hex && (
+                        <span
+                          style={{
+                            display: "inline-block",
+                            width: "0.75rem",
+                            height: "0.75rem",
+                            borderRadius: "50%",
+                            background: entry.session.rink_locations.color_hex,
+                            border: "1px solid rgba(0,0,0,0.15)",
+                          }}
+                        />
+                      )}
+                      {entry.session.rink_locations?.name}
                     </p>
                     <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", margin: 0 }}>
                       {entry.session.day_of_week.charAt(0).toUpperCase() + entry.session.day_of_week.slice(1)},{" "}
