@@ -67,61 +67,65 @@ export default function CalendarPage() {
 
   return (
     <div className="page-content">
-      <h1 className="page-title">Calendar</h1>
-      <p className="page-subtitle">Sync your child's skating schedule with your calendar app</p>
+      <h1 className="page-title">Calendar Export</h1>
+      <p className="page-subtitle">Sync your child's skating schedule with your favourite calendar app</p>
 
       {error && <p className="status status--error">{error}</p>}
 
-      <div className="card" style={{ marginBottom: "1.5rem" }}>
+      <div className="card">
         <h2 className="card-title">Export Options</h2>
-        <div className="calendar-actions">
+        <p style={{ fontSize: "0.875rem", color: "var(--ink-soft)", marginBottom: "1rem" }}>
+          Subscribing keeps your calendar up to date automatically when class dates change.
+        </p>
+
+        <div className="calendar-options">
           <button
             type="button"
-            className="btn"
+            className="calendar-option-btn"
             onClick={handleDownloadIcs}
             disabled={downloading}
           >
-            {downloading ? "Downloading..." : "Download .ics"}
+            <span className="calendar-option-icon">📥</span>
+            {downloading ? "Downloading…" : "Download .ics"}
           </button>
 
           {calendarUrls?.webcalUrl && (
             <a
               href={calendarUrls.webcalUrl}
-              className="btn"
+              className="calendar-option-btn"
               style={{ textDecoration: "none" }}
             >
-              Subscribe in Apple Calendar
+              <span className="calendar-option-icon">🍎</span>
+              Apple Calendar
             </a>
           )}
 
           {calendarUrls?.googleUrl && (
             <a
               href={calendarUrls.googleUrl}
-              className="btn"
+              className="calendar-option-btn"
               target="_blank"
               rel="noopener noreferrer"
               style={{ textDecoration: "none" }}
             >
-              Subscribe in Google Calendar
+              <span className="calendar-option-icon">📅</span>
+              Google Calendar
             </a>
           )}
 
           {calendarUrls?.outlookUrl && (
             <a
               href={calendarUrls.outlookUrl}
-              className="btn"
+              className="calendar-option-btn"
               target="_blank"
               rel="noopener noreferrer"
               style={{ textDecoration: "none" }}
             >
-              Subscribe in Outlook
+              <span className="calendar-option-icon">📧</span>
+              Outlook
             </a>
           )}
         </div>
-
-        <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", marginTop: "1rem" }}>
-          Subscribing keeps your calendar up to date automatically when class dates change.
-        </p>
       </div>
 
       {practices.length > 0 && (
