@@ -311,11 +311,13 @@ ALTER TABLE public.session_instructors ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.class_dates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.enrollments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.makeup_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.skill_assessments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.feedback_cards ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.instructor_ratings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ice_shows ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ice_show_groups ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ice_show_group_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ice_show_practices ENABLE ROW LEVEL SECURITY;
 
 -- Users: read own row; insert own row
@@ -335,9 +337,13 @@ CREATE POLICY "student_read_own_enrollment"
   ON public.enrollments FOR SELECT
   USING (student_id = auth.uid());
 
+-- Makeup requests: authenticated can read
+CREATE POLICY "auth_read_makeup_requests" ON public.makeup_requests FOR SELECT TO authenticated USING (true);
+
 -- Ice show: authenticated can read
 CREATE POLICY "auth_read_ice_shows" ON public.ice_shows FOR SELECT TO authenticated USING (true);
 CREATE POLICY "auth_read_ice_show_groups" ON public.ice_show_groups FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read_ice_show_group_sessions" ON public.ice_show_group_sessions FOR SELECT TO authenticated USING (true);
 CREATE POLICY "auth_read_ice_show_practices" ON public.ice_show_practices FOR SELECT TO authenticated USING (true);
 
 -- ----------------------------------------------------------
