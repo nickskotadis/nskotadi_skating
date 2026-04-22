@@ -3,10 +3,22 @@
 A full-stack web application that helps a local skating school move away from paper-based tracking. Covers class management, attendance, skill progression, instructor feedback cards, make-up sessions, parent/student/instructor dashboards, ice show scheduling, and calendar export.
 
 **Stack:**
-- Frontend: React 19 + Vite + TypeScript (`apps/web`) — deployed on Vercel
-- Backend: Express 4 + TypeScript (`apps/api`) — deployed on Render
+- Frontend: React 19 + Vite + TypeScript (`apps/web`)
+- Backend: Express 4 + TypeScript (`apps/api`)
 - Auth + Database: Supabase (PostgreSQL + Supabase Auth)
 - Routing: React Router v6
+
+---
+
+## Demo
+
+<a href="docs/videos/skatetrack-demo.mp4">
+  <img src="docs/images/skatetrack-demo.png" alt="SkateTrack Demo" width="400">
+</a>
+
+---
+
+> Developed in the class I400-Vibe and AI Programming, Spring 2026, IUB, with the assistance of Claude Sonnet 4.6 within Claude Code (Anthropic).
 
 ---
 
